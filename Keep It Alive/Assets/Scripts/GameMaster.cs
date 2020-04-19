@@ -13,6 +13,12 @@ public class GameMaster : MonoBehaviour
     float sfxVol;
     public float SfxVol { get { return sfxVol; } set { sfxVol = value; } }
 
+    //Player Status :
+    public float InitialHeartRate = 0.01f;
+    float heartPoint = 1f;
+    public float HeartPoint { get { return heartPoint; } set { heartPoint = value; } }
+    float heartDropRate = 0.0f;
+    public float HeartDropRate { get { return heartDropRate; } set { heartDropRate = value; } }
 
     void Awake()
     {
@@ -20,7 +26,11 @@ public class GameMaster : MonoBehaviour
         // Initial Value for the game :
         BgmVol = 0.7f;
         SfxVol = 1.0f;
+
+        HeartPoint = 1;
+        heartDropRate = InitialHeartRate;
     }
+
 
     public IEnumerator AudioFadeOut(AudioSource audioSource, float FadeTime)
     {

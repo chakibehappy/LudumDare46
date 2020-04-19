@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 /* This code support both selection from joystick, keyboard or mouse
  * Joystick : Analog / Directional button
@@ -23,8 +24,6 @@ public class StartingMenu : MonoBehaviour
     public Slider sfxSlider;
 
     // joy stick and axis input related :
-    float buttonDelay = 0.25f;
-    float delay = 0;
     bool mouseOnButton;
     bool isPressingVertical, isPressingHorizontal;
 
@@ -41,6 +40,8 @@ public class StartingMenu : MonoBehaviour
     public float fadingTime = 1f;
     public float fadeStep = 0.04f;
 
+    Gamepad gamepad;
+
     void Awake()
     {
         fadingScreen.gameObject.SetActive(true);
@@ -50,9 +51,12 @@ public class StartingMenu : MonoBehaviour
 
     void Start()
     {
+        gamepad = Gamepad.current;
         GM = GameObject.Find("Game Master").GetComponent<GameMaster>();
         Bgm = GameObject.Find("Bgm").GetComponent<AudioSource>();
         Sfx = GameObject.Find("Sfx").GetComponent<AudioSource>();
+        bgmSlider.value = GM.BgmVol;
+        sfxSlider.value = GM.SfxVol;
         Bgm.ignoreListenerVolume = true;
 
         Bgm.clip = bgmClip;
@@ -64,7 +68,6 @@ public class StartingMenu : MonoBehaviour
     {
         InputHandler();
         MenuManager();
-        ApplySetting();
     }
 
     void FixedUpdate()
@@ -81,7 +84,8 @@ public class StartingMenu : MonoBehaviour
             if (isPressingVertical == false)
             {
                 isPressingVertical = true;
-                if(!onSetting)
+                Sfx.PlayOneShot(sfxClip[0]);
+                if (!onSetting)
                 {
                     if (y > 0)
                     {
@@ -120,6 +124,7 @@ public class StartingMenu : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         if (onSetting)
         {
+            ApplySetting();
             if (x != 0)
             {
                 if (isPressingHorizontal == false)
@@ -135,6 +140,8 @@ public class StartingMenu : MonoBehaviour
                         if (subSelection == 0 && GM.BgmVol > 0) GM.BgmVol -= 0.1f;
                         else if (subSelection == 1 && GM.SfxVol > 0) GM.SfxVol -= 0.1f;
                     }
+                    bgmSlider.value = GM.BgmVol;
+                    sfxSlider.value = GM.SfxVol;
                 }
             }
             if (x == 0)
@@ -143,9 +150,10 @@ public class StartingMenu : MonoBehaviour
             }
         }
         
-        if (Input.GetButtonDown("Fire1")) SelectingMenu();
+        if (Input.GetButtonDown("Fire2")) SelectingMenu();
         if (Input.GetKeyDown(KeyCode.Return)) SelectingMenu();
-        
+        if (Input.GetMouseButtonDown(0) && mouseOnButton) SelectingMenu();
+
     }
 
     void MenuManager()
@@ -165,31 +173,30 @@ public class StartingMenu : MonoBehaviour
 
     void ApplySetting()
     {
-        bgmSlider.value = GM.BgmVol;
-        sfxSlider.value = GM.SfxVol;
-        Bgm.volume = GM.BgmVol;
-        AudioListener.volume = GM.SfxVol;
+        GM.BgmVol = bgmSlider.value;
+        GM.SfxVol = sfxSlider.value;
+        Bgm.volume = bgmSlider.value;
+        AudioListener.volume = sfxSlider.value;
     }
 
     void SelectingMenu()
     {
-        Sfx.PlayOneShot(sfxClip[0]);
         if(!onSetting)
         {
+            Sfx.PlayOneShot(sfxClip[1]);
             if (selection == 0)
             {
+                // Handheld.Vibrate(); // vibrate for phone
+                if(gamepad != null) gamepad.SetMotorSpeeds(0.123f, 0.234f);
                 StartCoroutine("GoToStartingScene");
             }
             else if (selection == 1)
             {
-                StartCoroutine("ContinueGame");
-            }
-            else if (selection == 2)
-            {
+                subSelection = 0;
                 onSetting = true;
                 SettingUI.SetActive(true);
             }
-            else if (selection == 3)
+            else if (selection == 2)
             {
                 StartCoroutine("QuitGame");
             }
@@ -198,6 +205,8 @@ public class StartingMenu : MonoBehaviour
         {
             if(subSelection == 2)
             {
+                selection = 0;
+                Sfx.PlayOneShot(sfxClip[2]);
                 onSetting = false;
                 SettingUI.SetActive(false);
             }
@@ -206,6 +215,7 @@ public class StartingMenu : MonoBehaviour
 
     public void MouseEnterButton(int button)
     {
+        Sfx.PlayOneShot(sfxClip[0]);
         mouseOnButton = true;
         selection = button;
         subSelection = button;
