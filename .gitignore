@@ -1,0 +1,66 @@
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Obj/
+UnityGenerated/
+Library/
+APK/
+Assets/_LocalDocuments
+Assets/_Trash
+Assets/_NOGIT
+Assets/Wwise/*
+Keys/
+XCODE/
+ProjectSettings/*.xml
+Food_Game/*
+Assets/Unity-iPhone/*
+Assets/_IGNORE/*
+
+
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+.vs/
+ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+*.tmp
+
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# Unity3D generated meta files
+*.pidb.meta
+
+# Unity3D Generated File On Crash Reports
+sysinfo.txt
+RealTimeMultiplayer.meta
+
+# ============ #
+# OTHERS #
+# ============ #
+remote_config_data
